@@ -1,0 +1,42 @@
+# Конфигурация скрипта обработки данных
+
+source:
+  type: csv            # csv | excel | sql | api
+  path: data/sales.csv
+  kwargs: {}           # доп. параметры pandas.read_csv (sep, encoding...)
+
+# Пример для SQL:
+# source:
+#   type: sql
+#   connection_string: "postgresql+psycopg2://user:pass@localhost:5432/mydb"
+#   query: |
+#     SELECT c.region, SUM(o.amount) AS total
+#     FROM orders o JOIN customers c ON c.id = o.customer_id
+#     GROUP BY c.region;
+
+# Пример для API:
+# source:
+#   type: api
+#   url: https://api.example.com/v1/sales
+#   params: {date_from: "2026-01-01"}
+#   data_key: results
+
+target: price          # целевая колонка для ML (null — без модели)
+task: regression       # regression | classification | null
+
+date_columns: [order_date]
+dayfirst: true
+missing_strategy: median
+
+expected_dtypes:
+  price: float64
+  quantity: int64
+
+# email:                  # раскомментируйте для автоматической рассылки
+#   smtp_host: smtp.gmail.com
+#   port: 587
+#   user: your@gmail.com
+#   password: app_password
+#   to: chief@company.ru
+#   subject: Ежедневный отчёт по продажам
+#   body: Отчёт во вложении.
